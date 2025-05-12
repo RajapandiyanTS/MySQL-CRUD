@@ -1,0 +1,100 @@
+import java.sql.*;
+public class CRUD{
+    static String url = "jdbc:mysql://localhost:3306/";
+    static String user = "root";
+    static String pass = "Raja@1645";
+    static String data_base_name = "full_demo";
+    public static void create_database() throws Exception {
+        Connection con = DriverManager.getConnection(url,user,pass);
+        Statement st = con.createStatement();
+        String query = "CREATE DATABASE If NOT EXISTS "+ data_base_name;
+        int n = st.executeUpdate(query);
+        System.out.println("Value of n is : "+ n);
+        if(n>0) {
+            System.out.println("Created database"+ data_base_name);
+        }
+        else {
+            System.out.println("Database exist");
+        }
+        con.close();
+    }
+    public static void create_table() throws Exception {
+        Connection con = DriverManager.getConnection(url,user,pass);
+        Statement st = con.createStatement();
+        String query = "USE "+data_base_name;
+        String query2 = "CREATE TABLE students(std_id int not null,std_name varchar(50) not null)";
+        st.executeUpdate(query);
+        st.executeUpdate(query2);
+        con.close();
+    }
+
+    public static void view_table() throws Exception {
+        Connection con = DriverManager.getConnection(url, user, pass);
+        Statement st = con.createStatement();
+        String tbname = "students";
+        String query = "USE " + data_base_name;
+        String query1 = "SELECT * FROM " + tbname;
+        st.executeUpdate(query);
+        ResultSet rs = st.executeQuery(query1);
+        while (rs.next()) {
+            int std_id = rs.getInt(1);
+            String std_name = rs.getString(2);
+            System.out.println(std_id + " " + std_name);
+        }
+        con.close();
+    }
+    public static void insert_values(int id, String name) throws Exception{
+            Connection con = DriverManager.getConnection(url,user,pass);
+            Statement st = con.createStatement();
+            String query = "USE "+data_base_name;
+            st.executeUpdate(query);
+            String query1 ="INSERT INTO students VALUES(?,?)";
+            PreparedStatement stmt = con.prepareStatement(query1);
+            stmt.setInt(1, id);
+            stmt.setString(2, name);
+            stmt.executeUpdate();
+            con.close();
+    }
+
+    public static void update_values()throws Exception {
+        Connection con = DriverManager.getConnection(url,user,pass);
+        Statement st = con.createStatement();
+        String tb = "students";
+        String query = "USE "+data_base_name;
+        st.executeUpdate(query);
+        String query1 ="UPDATE students set std_name = 'PRAVEEN' where std_id = 102";
+        st.executeUpdate(query1);
+        con.close();
+    }
+
+    public static void delete_row()throws Exception {
+        Connection con = DriverManager.getConnection(url,user,pass);
+        Statement st = con.createStatement();
+        String tb = "students";
+        String query = "USE "+data_base_name;
+        st.executeUpdate(query);
+        String query1 ="DELETE FROM "+ tb +" WHERE std_id = 102";
+        st.executeUpdate(query1);
+        con.close();
+    }
+    public static void main(String[] args){
+
+        try {
+            create_database();
+            create_table();
+            view_table();
+            insert_values(101,"raja");
+            insert_values(102,"ajar");
+            view_table();
+            update_values();
+            delete_row();
+            view_table();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+    }
+
+}
